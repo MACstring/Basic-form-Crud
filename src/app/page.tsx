@@ -1,22 +1,39 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { createClient } from '@supabase/supabase-js';
+import '@mantine/core/styles.css';
+import { Button, TextInput, Container, Title, Table, MantineProvider, createTheme, mergeThemeOverrides, Center } from '@mantine/core';
 
 const supabaseUrl = 'https://ughzzxqfwubzlopegvyd.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVnaHp6eHFmd3ViemxvcGVndnlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTU0MzM5NzUsImV4cCI6MjAzMTAwOTk3NX0.dQzHDQU0HQ1UoBx4kB6FiLC7ze6CCIx4LzSWOxfQpk4';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+const theme1 = createTheme({
+  primaryColor: 'orange',
+  defaultRadius: 0,
+});
+
+const theme2 = createTheme({
+  cursorType: 'pointer',
+});
+const myTheme = mergeThemeOverrides(theme1, theme2);
+
 interface StudentInfo {
   id: number;
   name: string;
   class: string;
+  phone: number;
 }
 
 function Home() {
   const [studentInfos, setStudentInfos] = useState<StudentInfo[]>([]);
   const [name, setName] = useState('');
+  const [nameError, setNameError] = useState('');
   const [classValue, setClassValue] = useState('');
-
+  const [classError, setClassError] = useState('');
+  const [phoneValue, setPhoneValue] = useState('');
+  const [phoneError, setPhoneError] = useState(''); 
+  
   useEffect(() => {
     fetchStudentInfos();
   }, []);
@@ -37,7 +54,7 @@ function Home() {
     try {
       const { data, error } = await supabase
         .from('Student-info')
-        .insert([{ name, class: classValue }])
+        .insert([{ name, class: classValue, phone: phoneValue }])
         .select();
       if (error) {
         throw error;
@@ -46,12 +63,13 @@ function Home() {
         setStudentInfos([...studentInfos, data[0] as StudentInfo]);
         setName('');
         setClassValue('');
+        setPhoneValue('');
       }
     } catch (error: any) {
       console.error('Error adding student information:', error);
     }
   };
-  
+
   const deleteStudentInfo = async (id: number) => {
     try {
       const { error } = await supabase
@@ -67,64 +85,105 @@ function Home() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const nameRegex = /^[a-zA-Z\s]+$/;
+    if (!nameRegex.test(name)) {
+      setNameError('Please enter a valid name (alphabets and spaces only).');
+      return;
+    }
+    const classRegex = /^[a-zA-Z0-9\s]+$/;
+    if (!classRegex.test(classValue)) {
+      setClassError('Please enter a valid class (alphanumeric and spaces only).');
+      return;
+    }
+    if (!phoneValue) {
+      setPhoneError('Phone number is required');
+      return;
+    }
+    const phoneRegex = /^[0-9]{11}$/;
+    if (!phoneRegex.test(phoneValue)) {
+      setPhoneError('Please enter a valid phone number with maximum 11 digits.');
+      return;
+    }
     addStudentInfo();
   };
 
   return (
-    <main className="max-w-4xl mx-auto mt-4">
-      <div className="text-center my-5 flex flex-col gap-4">
-        <h1 className="text-2xl font-bold">Student Information App</h1>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <input
-            type="text"
-            placeholder="Name"
+     <MantineProvider theme={myTheme}>
+    <div className="">
+      <Container>
+        <Title>Student Information App</Title>
+        <form onSubmit={handleSubmit}>
+          <TextInput
+            label="Name"
+            placeholder="Enter name"
             value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="input input-bordered w-full"
+            onChange={(e) => {
+              setName(e.target.value);
+              setNameError('');
+            }}
             required
+            error={nameError}
+            mb="sm"
           />
-          <input
-            type="text"
-            placeholder="Class"
+          <TextInput
+            label="Class"
+            placeholder="Enter class"
             value={classValue}
-            onChange={(e) => setClassValue(e.target.value)}
-            className="input input-bordered w-full"
+            onChange={(e) => {
+              setClassValue(e.target.value);
+              setClassError('');
+            }}
             required
+            error={classError}
+            mb="sm"
           />
-          <button type="submit" className="btn btn-primary w-full">
+          <TextInput
+            label="Phone"
+            placeholder="Enter phone number"
+            value={phoneValue}
+            onChange={(e) => {
+              setPhoneValue(e.target.value);
+              setPhoneError('');
+            }}
+            required
+            error={phoneError}
+            mb="sm"
+          />
+          <Button type="submit" fullWidth>
             Add Student Information
-          </button>
+          </Button>
         </form>
-      </div>
+        <Table my="xl">
+  <thead className="text-left">
+    <tr>
+      <th className="border border-gray-300 px-4 py-2">Name</th>
+      <th className="border border-gray-300 px-4 py-2">Class</th>
+      <th className="border border-gray-300 px-4 py-2">Phone number</th>
+      <th className="border border-gray-300 px-4 py-2 text-right">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {studentInfos.map((studentInfo) => (
+      <tr key={studentInfo.id}>
+        <td className="border border-gray-300 px-4 py-2">{studentInfo.name}</td>
+        <td className="border border-gray-300 px-4 py-2">{studentInfo.class}</td>
+        <td className="border border-gray-300 px-4 py-2">{studentInfo.phone}</td>
+        <td className="border border-gray-300 px-4 py-2 text-right">
+          <Button
+            onClick={() => deleteStudentInfo(studentInfo.id)}
+            color="red"
+          >
+            Delete
+          </Button>
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</Table>
 
-      <div className="overflow-x-auto">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Class</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {studentInfos.map((studentInfo) => (
-              <tr key={studentInfo.id}>
-                <td>{studentInfo.name}</td>
-                <td>{studentInfo.class}</td>
-                <td>
-                  <button
-                    onClick={() => deleteStudentInfo(studentInfo.id)}
-                    className="btn btn-danger"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      </Container>
       </div>
-    </main>
+    </MantineProvider>
   );
 }
 
