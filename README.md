@@ -1,36 +1,12 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Description 
+This is a simple student information app, that is performing basic crud operations.
+when I enter my name and class and press the "Add Student Information" button
+it adds it to the database (supabase) and also shows the entry on the screen, as shown in the images below
+![image](https://github.com/MACstring/Basic-form-Crud/assets/72609670/a2bfabe9-5b2b-42a2-9a6c-ab6a23360827)
+![image](https://github.com/MACstring/Basic-form-Crud/assets/72609670/c489c646-2a83-4d9b-82fa-121030d23c5d)
 
-## Getting Started
+when I click delete button, the entry is deleted from the database and also from the screen
 
-First, run the development server:
+Also, it fetchs the data from database and displays it on the screen if there is data in the database
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
