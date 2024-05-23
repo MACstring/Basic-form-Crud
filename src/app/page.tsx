@@ -4,9 +4,9 @@ import { createClient } from '@supabase/supabase-js';
 import '@mantine/core/styles.css';
 import { Button, TextInput, Container, Title, Table, MantineProvider, createTheme, mergeThemeOverrides, Center } from '@mantine/core';
 
-const supabaseUrl = 'https://ughzzxqfwubzlopegvyd.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVnaHp6eHFmd3ViemxvcGVndnlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTU0MzM5NzUsImV4cCI6MjAzMTAwOTk3NX0.dQzHDQU0HQ1UoBx4kB6FiLC7ze6CCIx4LzSWOxfQpk4';
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string;
+export const supabase = createClient(supabaseUrl, supabaseKey);
 
 const theme1 = createTheme({
   primaryColor: 'orange',
